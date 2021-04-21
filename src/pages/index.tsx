@@ -1,17 +1,14 @@
 import Head from "next/head";
-import styles from "../styles/Home.module.scss";
+import Header from "../components/Header";
 
 export default function Home() {
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>Podcastr</title>
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1>Hello Next</h1>
-      </main>
+      <Header />
     </div>
   );
 }
