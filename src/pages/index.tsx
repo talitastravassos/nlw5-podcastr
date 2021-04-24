@@ -4,18 +4,22 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useContext } from "react";
+import { PlayerContext } from "../context/PlayerContext";
 import { api } from "../services/api";
 import { Episode } from "../types/podcastr.types";
 import { convertDurationToTimeString } from "../utils/convertDurationToTimeString";
 import styles from "./home.module.scss";
 
 type Props = {
+  // episodes: Episode[]; // || Array<Episode>,
   latestEpisodes: Episode[];
   allEpisodes: Episode[];
 };
 
 export default function Home({ latestEpisodes, allEpisodes }: Props) {
-  // console.log(latestEpisodes, allEpisodes);
+  const { play } = useContext(PlayerContext);
+
   return (
     <>
       <Head>
@@ -38,7 +42,7 @@ export default function Home({ latestEpisodes, allEpisodes }: Props) {
                   />
 
                   <div className={styles.episodeDetails}>
-                    <Link href={`/`}>
+                    <Link href={`/episodes/${episode.id}`}>
                       <a>{episode.title}</a>
                     </Link>
                     <p>{episode.members}</p>
@@ -46,7 +50,7 @@ export default function Home({ latestEpisodes, allEpisodes }: Props) {
                     <span>{episode.durationAsString}</span>
                   </div>
 
-                  <button type="button">
+                  <button type="button" onClick={() => play(episode)}>
                     <img src="/play-green.svg" alt="Tocar episódio" />
                   </button>
                 </li>
@@ -83,7 +87,7 @@ export default function Home({ latestEpisodes, allEpisodes }: Props) {
                       />
                     </td>
                     <td>
-                      <Link href={`/`}>
+                      <Link href={`/episodes/${episode.id}`}>
                         <a>{episode.title}</a>
                       </Link>
                     </td>
@@ -145,7 +149,7 @@ export const getStaticProps: GetStaticProps = async () => {
       url: episode.file.url,
     };
   });
-
+  // posicao 0 até a 2
   const latestEpisodes = episodes.slice(0, 2);
   const allEpisodes = episodes.slice(2, episodes.length);
 
@@ -154,6 +158,7 @@ export const getStaticProps: GetStaticProps = async () => {
       latestEpisodes,
       allEpisodes,
     },
+    // Segundos para gerar uma nova versão da página, a cada 8 horas gera uma nova chamada de api
     revalidate: 60 * 60 * 8,
   };
 };
